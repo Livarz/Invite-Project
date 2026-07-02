@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quer sair comigo?</title>
+  
+  <!-- Importando uma fonte mais bonita do Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Gradiente mais vibrante e solar */
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      overflow: hidden;
+    }
+
+    .card {
+      width: min(90%, 420px);
+      min-height: 340px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 32px;
+      padding: 40px 30px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 2.2rem;
+      color: #2d3436;
+      font-weight: 700;
+    }
+
+    p {
+      color: #636e72;
+      margin-bottom: 40px;
+      font-size: 1.1rem;
+    }
+
+    .buttons {
+      position: relative;
+      width: 100%;
+      height: 180px; /* Área segura para o botão "Não" fugir sem invadir o texto nem o botão "Sim" */
+    }
+
+    button {
+      border: none;
+      padding: 14px 32px;
+      border-radius: 999px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      position: absolute;
+      white-space: nowrap;
+      touch-action: manipulation;
+    }
+
+    #yesBtn {
+      /* Cor ajustada para o tema solar */
+      background: #ff7675;
+      color: white;
+      box-shadow: 0 8px 20px rgba(255, 118, 117, 0.4);
+      left: 15%;
+      top: 20px;
+      /* Animação para chamar atenção pro SIM */
+      animation: pulse 2s infinite;
+    }
+
+    #yesBtn:hover {
+      transform: scale(1.08);
+      background: #d63031;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0.6); }
+      70% { box-shadow: 0 0 0 15px rgba(255, 118, 117, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0); }
+    }
+
+    #noBtn {
+      background: #dfe6e9;
+      color: #2d3436;
+      left: 55%;
+      top: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    #noBtn:hover {
+      background: #b2bec3;
+    }
+
+    .message {
+      display: none;
+      margin-top: 20px;
+      font-size: 1.5rem;
+      /* Cor da mensagem de sucesso */
+      color: #ff7675;
+      font-weight: 700;
+      animation: fadeIn 0.5s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .heart {
+      position: fixed;
+      font-size: 28px;
+      animation: float 2.5s ease-in-out forwards;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Animação dos corações subindo e girando */
+    @keyframes float {
+      0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-200px) scale(1.8) rotate(20deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <!-- Mudei o ursinho para um sol brilhante -->
+    <div style="font-size: 3rem; margin-bottom: 10px;">☀️</div>
+    <h1>Quer sair comigo?</h1>
+    <!-- Texto alterado para o tema "sunshine" -->
+    <p>Tem comida 🍕😋</p>
+
+    <div class="buttons">
+      <button id="yesBtn">Sim</button>
+      <button id="noBtn">Não</button>
+    </div>
+
+    <div id="message" class="message">
+      Sabia que você ia escolher certo! 💖<br>
+      <span style="font-size: 1rem; color: #636e72;">Enviando sua resposta...</span>
+    </div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const message = document.getElementById("message");
+    const buttonsContainer = document.querySelector(".buttons");
+
+    const frases = [
+      "Tem certeza?",
+      "Pensou bem?",
+      "Olha com carinho",
+      "Certeza mesmo?",
+      "Última chance",
+      "Não faz isso comigo",
+      "Clica no Sim vai 😭",
+      "Resposta errada"
+    ];
+
+    let contador = 0;
+
+    function moverBotaoNao() {
+      // Troca o texto antes de medir, porque frases maiores mudam a largura do botão.
+      noBtn.textContent = frases[contador % frases.length];
+      contador++;
+
+      const containerRect = buttonsContainer.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      // Calcula limites dentro da própria área dos botões para evitar sobreposição
+      // com o texto e impedir que o botão fuja da área visual no mobile.
+      const yesRect = yesBtn.getBoundingClientRect();
+      const gap = 10;
+      const maxX = Math.max(0, containerRect.width - btnRect.width);
+      const maxY = Math.max(0, containerRect.height - btnRect.height);
+
+      let randomX = 0;
+      let randomY = 0;
+
+      // Tenta achar uma posição que não colida com o botão "Sim".
+      // Se a tela estiver estreita demais, usa a melhor posição encontrada sem quebrar os limites.
+      for (let tentativa = 0; tentativa < 30; tentativa++) {
+        randomX = Math.random() * maxX;
+        randomY = Math.random() * maxY;
+
+        const candidate = {
+          left: containerRect.left + randomX,
+          right: containerRect.left + randomX + btnRect.width,
+          top: containerRect.top + randomY,
+          bottom: containerRect.top + randomY + btnRect.height
+        };
+
+        const sobrepoeSim = !(
+          candidate.right < yesRect.left - gap ||
+          candidate.left > yesRect.right + gap ||
+          candidate.bottom < yesRect.top - gap ||
+          candidate.top > yesRect.bottom + gap
+        );
+
+        if (!sobrepoeSim) break;
+      }
+
+      noBtn.style.left = `${randomX}px`;
+      noBtn.style.top = `${randomY}px`;
+    }
+
+    // Pointer Events funcionam melhor entre mouse, toque e caneta.
+    noBtn.addEventListener("pointerenter", moverBotaoNao);
+    noBtn.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      moverBotaoNao();
+    });
+
+    yesBtn.addEventListener("click", () => {
+      message.style.display = "block";
+      yesBtn.style.display = "none";
+      noBtn.style.display = "none";
+      document.querySelector("p").style.display = "none"; // esconde o texto para focar na mensagem
+      
+      const waUrl = "https://wa.me/5513997986278?text=Aceito";
+
+      // Cria a mensagem e um botão "salva-vidas" do WhatsApp
+      message.innerHTML = `
+        Sabia que você ia escolher certo! 💖<br>
+        <span style="font-size: 1rem; color: #636e72;">Abrindo o WhatsApp...</span><br>
+        <a href="${waUrl}" target="_top" style="display: inline-block; margin-top: 15px; padding: 12px 24px; background: #25D366; color: white; text-decoration: none; border-radius: 999px; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); font-family: 'Poppins', sans-serif;">
+          Confirmar no Zap
+        </a>
+      `;
+
+      // Criar a chuva de corações e outros emojis solares
+      for (let i = 0; i < 30; i++) {
+        setTimeout(criarCoracao, i * 50); // Dá um leve delay entre cada coração
+      }
+
+      // Tenta o redirecionamento automático após 2.5 segundos
+      setTimeout(() => {
+        try {
+          // window.top força a quebra de iframes/navegadores internos
+          window.top.location.href = waUrl;
+        } catch(e) {
+          window.location.href = waUrl;
+        }
+      }, 2500);
+    });
+
+    function criarCoracao() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      
+      // Emojis sortidos para dar mais vida, incluindo o sol
+      const emojis = ["💖", "💘", "💕", "✨", "☀️", "🥰"];
+      heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.top = window.innerHeight + "px"; // Começa da base da tela
+
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
